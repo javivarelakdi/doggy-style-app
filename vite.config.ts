@@ -4,5 +4,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/doggy-style-app/", // Replace with your repo name
+  base: "/doggy-style-app/",
 });
