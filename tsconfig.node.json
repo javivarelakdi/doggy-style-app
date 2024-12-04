@@ -18,7 +18,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    //styled-components and paths
+    "baseUrl": ".",
+    "paths": {
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
+      "@/*": ["./src/*"] // This maps the @ alias to the src directory
+    }
   },
   "include": ["vite.config.ts"]
 }
