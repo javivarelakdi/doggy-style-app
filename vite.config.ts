@@ -10,4 +10,13 @@ export default defineConfig({
       "@": "/src", // This maps the @ alias to the src directory
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
