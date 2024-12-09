@@ -1,20 +1,23 @@
 // App.tsx
-import * as React from "react";
+import { useState, useEffect } from "react";
+import { User } from "./types/user";
+import { userService } from "./services/userService";
 import { ThemeProvider } from "styled-components";
 import { CssBaseline } from "@mui/material";
 import theme from "@/styles/theme";
 import { styled } from "@mui/system";
-import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid2";
 import dog1 from "@/assets/images/dog1.png";
-import dog2 from "@/assets/images/dog2.png";
-import dog3 from "@/assets/images/dog3.png";
-import dog4 from "@/assets/images/dog4.png";
-import BottomNavigation from "@mui/material/BottomNavigation";
-import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import RestoreIcon from "@mui/icons-material/Restore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ArchiveIcon from "@mui/icons-material/Archive";
+import {
+  CircularProgress,
+  Alert,
+  Avatar,
+  BottomNavigation,
+  BottomNavigationAction,
+} from "@mui/material";
 
 const HeaderContainer = styled("header")({
   position: "fixed",
@@ -44,25 +47,35 @@ const MainContent = styled("main")({
 });
 
 function App() {
-  const [value, setValue] = React.useState(0);
-  const users = [
-    { name: "User 1", img: dog1 },
-    { name: "User 2", img: dog2 },
-    { name: "User 3", img: dog3 },
-    { name: "User 4", img: dog4 },
-    { name: "User 5", img: dog1 },
-    { name: "User 6", img: dog2 },
-    { name: "User 7", img: dog3 },
-    { name: "User 8", img: dog4 },
-    { name: "User 9", img: dog1 },
-    { name: "User 10", img: dog2 },
-    { name: "User 11", img: dog3 },
-    { name: "User 12", img: dog4 },
-    { name: "User 13", img: dog1 },
-    { name: "User 14", img: dog2 },
-    { name: "User 15", img: dog3 },
-    { name: "User 16", img: dog4 },
-  ];
+  const [value, setValue] = useState(0);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        // Barcelona coordinates
+        const data = await userService.getUsers({
+          lng: 2.154007,
+          lat: 41.390205,
+        });
+        console.log("Fetched data:", data); // Debug log
+        setUsers(data);
+      } catch (err) {
+        console.error("Error:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch users");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{error}</Alert>;
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -76,8 +89,8 @@ function App() {
           {users.map((user, index) => (
             <Grid size={4} key={index}>
               <img
-                src={user.img}
-                alt={user.name}
+                src={dog1}
+                alt={user.username}
                 loading="lazy"
                 style={{ width: "100%", objectFit: "cover" }}
               />
