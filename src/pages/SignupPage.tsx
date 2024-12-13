@@ -15,21 +15,22 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/system";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { SignupData, AuthError } from "@/types/auth";
+import { SignupData } from "@/types/auth";
 
 const initialFormState: Omit<SignupData, "lng" | "lat"> = {
   username: "",
   password: "",
-  imgUrl: "",
+  imgUrl: null,
   breed: "",
   birth: new Date(),
-  gender: "male",
+  gender: "non-binary",
   about: "",
 };
 
@@ -52,22 +53,20 @@ export function SignupPage() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
-  const [error, setError] = useState<AuthError | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null); // New state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    setFormData((prev) => ({ ...prev, gender: event.target.value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedImage(e.target.files?.[0] || null);
   };
 
   const handleDateChange = (date: Date | null) => {
@@ -79,20 +78,56 @@ export function SignupPage() {
     }
   };
 
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   setIsSubmitting(true);
+  //   setError(null);
+
+  //   try {
+  //     await signup({
+  //       ...formData,
+  //       lng: 2.154007, // Barcelona coordinates
+  //       lat: 41.390205,
+  //     });
+  //     navigate("/");
+  //   } catch (err) {
+  //     setError(err);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      await signup({
-        ...formData,
-        lng: 2.154007, // Barcelona coordinates
-        lat: 41.390205,
-      });
+      const formDataToSend = new FormData();
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("breed", formData.breed);
+      formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("about", formData.about);
+      formDataToSend.append(
+        "birth",
+        formData.birth ? formData.birth.toISOString() : ""
+      ); // Send birth as ISO string
+      formDataToSend.append("lng", "2.154007");
+      formDataToSend.append("lat", "41.390205");
+      if (selectedImage) {
+        formDataToSend.append("image", selectedImage);
+      }
+
+      await signup(formDataToSend); // Send FormData to backend
       navigate("/");
-    } catch (err) {
-      setError(err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err); // If it's an Error object, set it directly
+      } else {
+        // Handle non-Error types (e.g., strings, numbers)
+        setError(new Error(`An unexpected error occurred: ${String(err)}`)); // Create a new Error object
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -137,14 +172,7 @@ export function SignupPage() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="imgUrl"
-                label="Profile Image URL"
-                value={formData.imgUrl}
-                onChange={handleChange}
-              />
+              <input type="file" name="image" onChange={handleFileChange} />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField

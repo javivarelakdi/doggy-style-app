@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "@/services/authService";
 import { User } from "@/types/user";
-import { SignupData } from "@/types/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -11,7 +10,7 @@ interface AuthContextType {
     lng: number,
     lat: number
   ) => Promise<void>;
-  signup: (userData: SignupData) => Promise<void>;
+  signup: (userData: FormData) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -55,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(userData);
   };
 
-  const signup = async (userData: SignupData) => {
+  const signup = async (userData: FormData) => {
     const newUser = await authService.signup(userData);
     setUser(newUser);
   };

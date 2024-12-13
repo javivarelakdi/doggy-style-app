@@ -1,28 +1,11 @@
 // src/services/authService.ts
 import axios from "axios";
+import { LoginCredentials } from "@/types/auth";
 
 const api = axios.create({
   baseURL: "/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true, // Important for sending/receiving cookies with requests
 });
-
-interface LoginCredentials {
-  username: string;
-  password: string;
-  lng: number;
-  lat: number;
-}
-
-interface SignupData extends LoginCredentials {
-  imgUrl: string;
-  breed: string;
-  birth: Date;
-  gender: string;
-  about: string;
-}
 
 export const authService = {
   login: async (credentials: LoginCredentials) => {
@@ -35,9 +18,13 @@ export const authService = {
     }
   },
 
-  signup: async (userData: SignupData) => {
+  signup: async (userData: FormData) => {
     try {
-      const response = await api.post("/auth/signup", userData);
+      const response = await api.post("/auth/signup", userData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error("Signup error:", error);

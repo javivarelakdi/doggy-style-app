@@ -107,7 +107,7 @@ export function ListPage() {
           {users.map((user, index) => (
             <Grid size={4} key={index}>
               <img
-                src={dog1}
+                src={user.imgUrl}
                 alt={user.username}
                 loading="lazy"
                 style={{ width: "100%", objectFit: "cover" }}

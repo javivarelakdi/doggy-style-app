@@ -1,8 +1,5 @@
 // src/types/auth.ts
 
-// Using the existing gender type from User interface
-export type Gender = "female" | "male" | "non-binary";
-
 // Base interface for login credentials
 export interface LoginCredentials {
   username: string;
@@ -13,15 +10,9 @@ export interface LoginCredentials {
 
 // SignupData interface extending LoginCredentials and matching User interface structure
 export interface SignupData extends LoginCredentials {
-  imgUrl: string;
+  imgUrl: string | null;
   breed: string;
   birth: Date;
-  gender: Gender;
+  gender: string;
   about: string;
-}
-
-// Optional: Auth Error type for handling authentication errors
-export interface AuthError {
-  code: string;
-  message: string;
 }
