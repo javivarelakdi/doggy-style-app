@@ -78,25 +78,6 @@ export function SignupPage() {
     }
   };
 
-  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   setIsSubmitting(true);
-  //   setError(null);
-
-  //   try {
-  //     await signup({
-  //       ...formData,
-  //       lng: 2.154007, // Barcelona coordinates
-  //       lat: 41.390205,
-  //     });
-  //     navigate("/");
-  //   } catch (err) {
-  //     setError(err);
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
