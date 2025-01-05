@@ -9,6 +9,7 @@ export interface User {
     type: string;
     coordinates: [number, number];
   };
+  distance?: number;
   gender?: "female" | "male" | "non-binary";
   favs?: string[];
   fans?: string[];

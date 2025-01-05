@@ -16,4 +16,14 @@ export const userService = {
       throw error;
     }
   },
+  getUserById: async (id: string) => {
+    try {
+      const response = await api.get(`/users/${id}`);
+      console.log("API Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user by ID:", error);
+      throw error;
+    }
+  },
 };

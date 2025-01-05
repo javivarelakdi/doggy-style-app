@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SignupPage } from "@/pages/SignupPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { ListPage } from "@/pages/ListPage";
+import DogProfilePage from "@/pages/DogProfilePage";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/dog/:id" element={<DogProfilePage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
